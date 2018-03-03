@@ -19,7 +19,7 @@ func NewSocket(Address string) *Socket {
 	return socket
 }
 
-func (socket *Socket) Channel(room string, incoming_message_handler func(string)) *Channel {
+func (socket *Socket) Channel(room string, incoming_message_handler func([]byte)) *Channel {
 	channel := Channel{Socket: socket, Room: room, IncomingMessageHandler: incoming_message_handler}
 	socket.Channels = append(socket.Channels, &channel)
 	return &channel
