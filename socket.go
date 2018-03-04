@@ -19,13 +19,14 @@ func NewSocket(Address string) *Socket {
 	return socket
 }
 
-func (socket *Socket) Channel(room string, incoming_message_handler func([]byte)) *Channel {
-	channel := Channel{Socket: socket, Room: room, IncomingMessageHandler: incoming_message_handler}
+//Channel creates and adds new Channel to socket.Channels
+func (socket *Socket) Channel(room string, incomingMessageHandler func(PhoenixMessage)) *Channel {
+	channel := Channel{Socket: socket, Room: room, IncomingMessageHandler: incomingMessageHandler}
 	socket.Channels = append(socket.Channels, &channel)
 	return &channel
 }
 
-//Connect - set gorilla Conn for socket
+//Connect sets gorilla/websocket Conn for socket
 func (socket *Socket) Connect() error {
 	dialer := websocket.Dialer{}
 	conn, _, err := dialer.Dial(socket.Address, nil)

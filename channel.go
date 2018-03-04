@@ -11,7 +11,7 @@ type Channel struct {
 	Socket                 *Socket
 	ControlChan            chan ControlChanMessage
 	Joined                 bool
-	IncomingMessageHandler func([]byte)
+	IncomingMessageHandler func(PhoenixMessage)
 }
 
 type ControlChanMessage struct {
@@ -28,7 +28,7 @@ type PhoenixMessage struct {
 	Ref     string
 	Topic   string
 	Event   string
-	Payload string
+	Payload json.RawMessage
 }
 
 func (channel *Channel) Start() {
@@ -47,7 +47,15 @@ func readMessages(channel *Channel) {
 		json.Unmarshal(phoenixResponce[2], &topic)
 		json.Unmarshal(phoenixResponce[3], &event)
 		if !((ref == "1") && (event == "phx_reply")) {
-			channel.IncomingMessageHandler(p)
+			channel.IncomingMessageHandler(
+				PhoenixMessage{
+					JoinRef: joinRef,
+					Ref:     ref,
+					Topic:   topic,
+					Event:   event,
+					Payload: phoenixResponce[4],
+				},
+			)
 		}
 	}
 }
